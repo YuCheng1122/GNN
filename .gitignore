@@ -1,0 +1,11 @@
+**/output/
+**/output_new/
+**/data/
+**/Ghidrathon-4.0.0/
+**/Vector/
+**/Gpickle/
+**/*.csv
+**/*.txt
+**/*.pth
+**/*.pkl
+**/*.log

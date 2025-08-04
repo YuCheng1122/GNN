@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+    <classpathentry kind="src" path="."/>
+    <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+
+    <classpathentry kind="lib" path="/home/tommy/ghidra_11.2.1_PUBLIC/Ghidra/Framework/Generic/lib/Generic.jar"/>
+    <classpathentry kind="lib" path="/home/tommy/ghidra_11.2.1_PUBLIC/Ghidra/Framework/Utility/lib/Utility.jar"/>
+    <classpathentry kind="lib" path="/home/tommy/ghidra_11.2.1_PUBLIC/Ghidra/Framework/SoftwareModeling/lib/SoftwareModeling.jar"/>
+    <classpathentry kind="lib" path="/home/tommy/ghidra_11.2.1_PUBLIC/Ghidra/Features/Decompiler/lib/Decompiler.jar"/>
+    <classpathentry kind="lib" path="/home/tommy/ghidra_11.2.1_PUBLIC/Ghidra/Framework/Project/lib/Project.jar"/>
+    <classpathentry kind="lib" path="/home/tommy/ghidra_11.2.1_PUBLIC/Ghidra/Framework/Format/lib/Format.jar"/>
+    <classpathentry kind="lib" path="/home/tommy/ghidra_11.2.1_PUBLIC/Ghidra/Features/Base/lib/Base.jar"/>
+    
+    <classpathentry kind="lib" path="/home/tommy/ghidra_11.2.1_PUBLIC/Ghidra/Framework/Generic/lib/gson-2.9.0.jar"/>
+    
+    <classpathentry kind="lib" path="/home/tommy/ghidra_11.2.1_PUBLIC/Ghidra/Processors/8051/lib/8051.jar"/>
+    <classpathentry kind="lib" path="/home/tommy/ghidra_11.2.1_PUBLIC/Ghidra/Features/Base/lib/Base.jar"/>
+    <classpathentry kind="lib" path="/home/tommy/ghidra_11.2.1_PUBLIC/Ghidra/Debug/Debugger/lib/Debugger.jar"/>
+    
+    <classpathentry kind="output" path="."/>
+</classpath>
