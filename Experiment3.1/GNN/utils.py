@@ -1,5 +1,6 @@
 from cProfile import label
 from logging import root
+import os
 import scipy.sparse as sp
 import numpy as np
 import scipy.sparse as sp
@@ -160,40 +161,31 @@ def simple_early_stopping(val_acc, best_val_acc, patience_counter, patience):
     
 
 
-def plot_training_curves(train_losses, val_accuracies, test_accuracies=None, val_losses=None):
-    """繪製訓練曲線，包含 Validation 與 Test Accuracy"""
-    plt.figure(figsize=(15, 5))
-    
-    # Training Loss
-    plt.subplot(1, 3, 1)
+def plot_training_curves(train_losses, val_losses, test_losses, val_accuracies, seed, save_dir="plots"):
+    os.makedirs(save_dir, exist_ok=True)
+    plt.figure(figsize=(8, 6))
     plt.plot(train_losses, label='Train Loss')
-    plt.title('Training Loss')
+    plt.plot(val_losses, label='Val Loss')
+    plt.plot(test_losses, label='Test Loss')
     plt.xlabel('Epoch')
     plt.ylabel('Loss')
+    plt.title('Train / Validation / Test Loss')
     plt.legend()
+    plt.tight_layout()
+    save_path = os.path.join(save_dir, f'loss_curves_{seed}.png')
+    plt.savefig(save_path)
+    plt.close()
 
-    # Validation & Test Accuracy
-    plt.subplot(1, 3, 2)
-    plt.plot(val_accuracies, label='Val Acc')
-    if test_accuracies:
-        plt.plot(test_accuracies, label='Test Acc')
-    plt.title('Accuracy over Epochs')
+    plt.figure(figsize=(8, 6))
+    plt.plot(val_accuracies, label='Val Accuracy', color='blue')
     plt.xlabel('Epoch')
     plt.ylabel('Accuracy')
+    plt.title('Validation Accuracy')
     plt.legend()
-
-    # Validation Loss (optional)
-    if val_losses:
-        plt.subplot(1, 3, 3)
-        plt.plot(val_losses, label='Val Loss')
-        plt.title('Validation Loss')
-        plt.xlabel('Epoch')
-        plt.ylabel('Loss')
-        plt.legend()
-    
     plt.tight_layout()
-    plt.savefig('training_curves.png')
-    plt.show()
+    save_path = os.path.join(save_dir, f'val_accuracy_curve_{seed}.png')
+    plt.savefig(save_path)
+    plt.close()
 
 
 def plot_confusion_matrix(cm, labels, filename="confusion_matrix.png"):
@@ -234,10 +226,11 @@ def test_model(model, test_loader, device, label_encoder):
     original_labels = label_encoder.inverse_transform(sorted(set(y_true + y_pred)))
     cm = confusion_matrix(y_true, y_pred, labels=label_encoder.transform(original_labels))
     
-    print("LabelEncoder classes:", label_encoder.classes_)
-    print("y_true labels:", set(label_encoder.inverse_transform(y_true)))
-    print("y_pred labels:", set(label_encoder.inverse_transform(y_pred)))
-    print("y_pred counts:", dict(pd.Series(label_encoder.inverse_transform(y_pred)).value_counts()))
+    # print("LabelEncoder classes:", label_encoder.classes_)
+    # print("y_true labels:", set(label_encoder.inverse_transform(y_true)))
+    # print("y_pred labels:", set(label_encoder.inverse_transform(y_pred)))
+    # print("y_pred counts:", dict(pd.Series(label_encoder.inverse_transform(y_pred)).value_counts()))
+    print("Report:\n", report)
 
 
     return {

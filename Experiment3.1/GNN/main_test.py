@@ -3,8 +3,10 @@ import random
 import numpy as np
 from torch_geometric.loader import DataLoader
 from train_utils import load_or_cache_data, train_epoch, evaluate
-from utils import simple_early_stopping, create_scheduler, plot_training_curves, plot_confusion_matrix, test_model
+from utils import simple_early_stopping, create_scheduler, test_model
 from model import GCN
+from utils import plot_training_curves
+from sklearn.metrics import classification_report
 
 def set_random_seed(seed):
     torch.manual_seed(seed)
@@ -19,10 +21,16 @@ def set_random_seed(seed):
 def run_experiment(seed):
     set_random_seed(seed)
     
-    train_csv_path = "/home/tommy/Projects/pcodeFcg/dataset/csv/train.csv"
-    test_csv_path = "/home/tommy/Projects/pcodeFcg/dataset/csv/test_mips.csv"
-    train_dir = "/home/tommy/Projects/pcodeFcg/vector/contrastive/GNN/mips/train"
-    test_dir = "/home/tommy/Projects/pcodeFcg/vector/contrastive/GNN/mips/test"
+    train_losses = []
+    val_losses_list = []
+    test_losses_list = []
+    val_accuracies = []
+    test_accuracies = []
+
+    train_csv_path = "/home/tommy/Projects/pcodeFcg/dataset/csv/temp/train_detection.csv"
+    test_csv_path = "/home/tommy/Projects/pcodeFcg/dataset/csv/temp/test_mips_detection.csv"
+    train_dir = "/home/tommy/Projects/pcodeFcg/vector/contrastive/GNN/mips_cbow_v2/train"
+    test_dir = "/home/tommy/Projects/pcodeFcg/vector/contrastive/GNN/mips_cbow_v2/test_mips"
     batch_size = 32
     hidden_channels = 64
     lr = 0.01
@@ -31,7 +39,7 @@ def run_experiment(seed):
     
     train_graphs, val_graphs, test_graphs, label_encoder, num_classes = load_or_cache_data(
         train_csv_path, test_csv_path, train_dir, test_dir,
-        cache_file="/home/tommy/Projects/pcodeFcg/vector/contrastive/GNN/mips/processed_data_cache.pkl",
+        cache_file="/home/tommy/Projects/pcodeFcg/vector/contrastive/GNN/mips_cbow_v2/processed_data_cache.pkl",
         force_reload=False
     )
 
@@ -45,13 +53,19 @@ def run_experiment(seed):
     scheduler = create_scheduler(optimizer, "plateau")
 
     best_val_acc = 0
-    patience = 15
+    patience = 20
     patience_counter = 0
 
     for epoch in range(1, epochs + 1):
-        train_epoch(model, train_loader, optimizer, criterion, device)
+        train_loss = train_epoch(model, train_loader, optimizer, criterion, device)
         val_accuracy, val_loss = evaluate(model, val_loader, device)
-        test_accuracy, _ = evaluate(model, test_loader, device)
+        test_accuracy, test_loss = evaluate(model, test_loader, device)
+
+        train_losses.append(train_loss)
+        val_losses_list.append(val_loss)
+        test_losses_list.append(test_loss)
+        val_accuracies.append(val_accuracy)
+        test_accuracies.append(test_accuracy)
 
         scheduler.step(val_loss)
 
@@ -62,7 +76,10 @@ def run_experiment(seed):
         if should_stop:
             break
 
-    # 測試模型
+        if epoch % 10 == 0:
+            print(f"[Epoch {epoch}] Val Accuracy = {val_accuracy:.4f}, Val Loss = {val_loss:.4f}")
+
+    plot_training_curves(train_losses, val_losses_list, test_losses_list, val_accuracies, seed)
     test_results = test_model(model, test_loader, device, label_encoder)
     return test_results
 
